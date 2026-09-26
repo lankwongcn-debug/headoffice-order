@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="zh-HK"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Head Office Order</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+background:#f4f6fa;color:#16233c;padding-bottom:158px}
+header{background:#1f6f6b;color:#fff;padding:14px 16px 13px;position:sticky;top:0;z-index:10;
+box-shadow:0 2px 10px rgba(0,0,0,.18)}
+h1{margin:0 0 2px;font-size:18px;letter-spacing:.2px}
+.store{font-size:13px;font-weight:700;opacity:.92;margin-bottom:4px}
+.hint{font-size:11.5px;opacity:.8;margin-bottom:9px;line-height:1.35}
+.meta{display:flex;gap:8px;align-items:center}
+.meta input{flex:1;min-width:0;padding:10px 11px;border:0;border-radius:9px;font-size:16px;
+background:rgba(255,255,255,.16);color:#fff}
+.meta input::placeholder{color:rgba(255,255,255,.7)}
+#dow{flex:none;font-size:14px;font-weight:700;padding:0 4px;white-space:nowrap}
+.wrap{padding:10px 12px}
+.cat{margin:20px 0 7px;padding:9px 13px;background:#1f6f6b;color:#fff;
+font-weight:700;font-size:13.5px;border-radius:9px;letter-spacing:.2px}
+.cat:first-child{margin-top:4px}
+.row{background:#fff;border-radius:10px;padding:10px 10px 9px 13px;margin-bottom:6px;
+box-shadow:0 1px 2px rgba(20,35,60,.07)}
+.row.on{background:#e9f5f4;box-shadow:0 0 0 1.5px #2f8f8a inset}
+.row.zero{opacity:.45}
+.top{display:flex;align-items:center;gap:10px}
+.nm{flex:1;min-width:0;font-size:15.5px;font-weight:600}
+.usual{display:block;font-size:11.5px;color:#a0a9b8;font-weight:400;margin-top:1px}
+input[type=number]{width:84px;flex:none;padding:11px 6px;text-align:center;font-size:17px;
+font-weight:700;border:1.5px solid #ccd4e2;border-radius:9px;background:#fbfcfe;color:#16233c}
+input[type=number]:focus{outline:none;border-color:#1f6f6b;background:#fff}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.chips{display:flex;gap:5px;margin-top:8px}
+.chips button{flex:1;padding:7px 0;font-size:14px;font-weight:700;border:1px solid #d6dced;
+border-radius:7px;background:#f7f9fd;color:#16233c}
+.chips button.x{flex:0 0 42px;color:#c0392b}
+textarea{width:100%;margin-top:16px;padding:12px;border:1.5px solid #ccd4e2;border-radius:10px;
+background:#fff;font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+color:#16233c;resize:vertical}
+textarea:focus{outline:none;border-color:#1f6f6b}
+textarea.on{background:#e9f5f4;border-color:#2f8f8a}
+.notelab{margin-top:18px;padding:9px 13px;background:#5a6782;color:#fff;
+font-weight:700;font-size:13.5px;border-radius:9px}
+footer{position:fixed;left:0;right:0;bottom:0;background:#fff;padding:10px 12px 15px;
+box-shadow:0 -3px 14px rgba(20,35,60,.16)}
+#cnt{text-align:center;font-size:13px;color:#5a6782;margin-bottom:8px}
+#cnt b{color:#1f6f6b;font-size:16px}
+button.send{width:100%;padding:15px;border:0;border-radius:11px;font-size:16.5px;font-weight:700;
+color:#fff;background:#25d366;margin-bottom:7px}
+.two{display:flex;gap:7px}
+.two button{flex:1;padding:11px;font-size:14px;font-weight:700;border:0;border-radius:10px;
+color:#fff;background:#5a6782}
+.two button.red{background:#c0392b}
+button.send:disabled{background:#c3cad6}
+#saved{text-align:center;font-size:11px;color:#8b95a7;margin-top:7px}
+</style></head><body>
+
+<header>
+  <h1>HEAD OFFICE ORDER</h1>
+  <div class="store">Roselands</div>
+  <div class="hint">數量可以係 &frac14;、&frac12;、&frac34;、整數 &mdash; 撳下面嘅掣,或者直接打字<br>
+  Quantities can be 0.25 / 0.5 / 0.75 or whole numbers. &plus;5 for cases.</div>
+  <div class="meta">
+    <input id="when" type="date" onchange="upd()">
+    <span id="dow"></span>
+    <input id="who" placeholder="你個名 / Name" oninput="save()">
+  </div>
+</header>
+
+<div class="wrap">
+<div class="cat">咖啡 / 糖漿 &middot; COFFEE &amp; SYRUP</div>
+<div class="row"><div class="top"><span class="nm">咖啡豆 Coffee Beans<span class="usual">平日 5 箱</span></span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="咖啡豆 Coffee Beans" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Chai Powder</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Chai Powder" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Decaf Coffee Beans</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Decaf Coffee Beans" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Vanilla Bottle</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Vanilla Bottle" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Caramel</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Caramel" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Hazelnut</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Hazelnut" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Chocolate Powder</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Chocolate Powder" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">洗咖啡機 Powder</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="洗咖啡機 Powder" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="cat">杯 / 蓋 &middot; CUPS &amp; LIDS</div>
+<div class="row"><div class="top"><span class="nm">16oz Cup</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="16oz Cup" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">12oz Cup</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="12oz Cup" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">12oz Lid</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="12oz Lid" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">8oz Cup</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="8oz Cup" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">8oz Lid</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="8oz Lid" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Large Cool Cup</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Large Cool Cup" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Small Cool Cup</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Small Cool Cup" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Cool Drink Lid</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Cool Drink Lid" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Piccolo Cup</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Piccolo Cup" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Piccolo Lid</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Piccolo Lid" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="cat">紙類 / 包裝 &middot; PAPER &amp; PACKAGING</div>
+<div class="row"><div class="top"><span class="nm">Takeaway Paper Bag</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Takeaway Paper Bag" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Wrap Paper Small</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Wrap Paper Small" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Wrap Paper Large</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Wrap Paper Large" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Takeaway Paper Tray</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Takeaway Paper Tray" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">T/A Paper Box</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="T/A Paper Box" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">The Shed Napkin</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="The Shed Napkin" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Sugar Stick</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Sugar Stick" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Hamburger Sticks</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Hamburger Sticks" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="cat">茶 &middot; TEA</div>
+<div class="row"><div class="top"><span class="nm">Green Tea</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Green Tea" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Peppermint Tea</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Peppermint Tea" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">English Tea</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="English Tea" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Chai Spice Tea</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Chai Spice Tea" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Lemongrass &amp; Ginger</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Lemongrass &amp; Ginger" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Chamomile Tea</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Chamomile Tea" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Earl Grey Tea</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Earl Grey Tea" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Matcha</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Matcha" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="cat">奶 &middot; MILK</div>
+<div class="row"><div class="top"><span class="nm">Bonsoy</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Bonsoy" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Lactose Free</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Lactose Free" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Milk Lab Oat</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Milk Lab Oat" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Alternative Oat</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Alternative Oat" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="row"><div class="top"><span class="nm">Almond</span><input type="number" inputmode="decimal" min="0" step="0.25" data-n="Almond" placeholder="" oninput="upd()"></div><div class="chips"><button type="button" onclick="bump(this,0.25)">&frac14;</button><button type="button" onclick="bump(this,0.5)">&frac12;</button><button type="button" onclick="bump(this,0.75)">&frac34;</button><button type="button" onclick="bump(this,1)">1</button><button type="button" onclick="bump(this,5)">+5</button><button type="button" class="x" onclick="bump(this,null)">&#10005;</button></div></div>
+<div class="notelab">備註 &middot; NOTES</div>
+<textarea id="note" rows="4" placeholder="有其他要 order 嘅、或者要同 head office 講嘅寫喺呢度&#10;Anything else to order, or a message for head office" oninput="upd()"></textarea>
+</div>
+
+<footer>
+  <div id="cnt"></div>
+  <button class="send" id="send" onclick="send()">用 WhatsApp 發出 &rarr;</button>
+  <div class="two">
+    <button onclick="copyTxt()">複製文字 Copy</button>
+    <button class="red" onclick="clearAll()">清空 Clear</button>
+  </div>
+  <div id="saved">自動儲存喺呢部手機 &middot; auto-saved on this phone</div>
+</footer>
+
+<script>
+var KEY = 'headoffice-order-v1';
+var STORE = 'Roselands';
+var qty = document.querySelectorAll('input[type=number]');
+var who = document.getElementById('who');
+var when = document.getElementById('when');
+var note = document.getElementById('note');
+
+var DOW_ZH = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+var DOW_EN = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function todayStr(){
+  var d = new Date(), m = d.getMonth() + 1, day = d.getDate();
+  return d.getFullYear() + '-' + (m < 10 ? '0' + m : m) + '-' + (day < 10 ? '0' + day : day);
+}
+
+// Build the date from its parts so the weekday is not shifted by the timezone.
+function dowOf(v){
+  if (!v) return '';
+  var p = v.split('-');
+  if (p.length !== 3) return '';
+  var d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+  if (isNaN(d.getTime())) return '';
+  return DOW_ZH[d.getDay()] + ' ' + DOW_EN[d.getDay()];
+}
+
+// 1.5 not 1.50, 2 not 2.00 — the order reads like it was written by hand.
+function fmt(n){
+  return (Math.round(n * 100) / 100).toString();
+}
+
+// The chips add to whatever is already there, so ½ then ½ makes 1.
+function bump(btn, amount){
+  var box = btn.parentNode.previousElementSibling.querySelector('input[type=number]');
+  if (amount === null) box.value = '';
+  else box.value = fmt((Number(box.value) || 0) + amount);
+  upd();
+}
+
+function save(){
+  var o = {who: who.value, when: when.value, note: note.value, q: {}};
+  for (var i = 0; i < qty.length; i++){
+    if (qty[i].value !== '') o.q[qty[i].dataset.n] = qty[i].value;
+  }
+  try { localStorage.setItem(KEY, JSON.stringify(o)); } catch(e){}
+}
+
+function load(){
+  var raw = null;
+  try { raw = localStorage.getItem(KEY); } catch(e){}
+  if (!raw){ when.value = todayStr(); return; }
+  var o;
+  try { o = JSON.parse(raw); } catch(e){ when.value = todayStr(); return; }
+  who.value = o.who || '';
+  when.value = o.when || todayStr();
+  note.value = o.note || '';
+  for (var i = 0; i < qty.length; i++){
+    var v = o.q ? o.q[qty[i].dataset.n] : null;
+    if (v != null) qty[i].value = v;
+  }
+}
+
+function picked(){
+  var out = [];
+  for (var i = 0; i < qty.length; i++){
+    if (qty[i].value !== '' && Number(qty[i].value) > 0)
+      out.push({n: qty[i].dataset.n, q: Number(qty[i].value)});
+  }
+  return out;
+}
+
+function upd(){
+  for (var i = 0; i < qty.length; i++){
+    var r = qty[i].closest('.row');
+    if (qty[i].value === '') r.className = 'row';
+    else if (Number(qty[i].value) > 0) r.className = 'row on';
+    else r.className = 'row zero';
+  }
+  document.getElementById('dow').textContent = dowOf(when.value);
+  var nt = note.value.trim();
+  note.className = nt ? 'on' : '';
+  var p = picked(), units = 0;
+  for (var j = 0; j < p.length; j++) units += p[j].q;
+  document.getElementById('cnt').innerHTML = p.length
+    ? '<b>' + p.length + '</b> 樣 &middot; 共 <b>' + fmt(units) + '</b>'
+    : '仲未填 &middot; nothing entered yet';
+  document.getElementById('send').disabled = (p.length === 0 && !nt);
+  save();
+}
+
+function build(){
+  var p = picked(), units = 0;
+  var t = 'HEAD OFFICE ORDER\n' + STORE + '\n';
+  if (when.value) t += 'Date: ' + when.value + ' (' + dowOf(when.value) + ')\n';
+  if (who.value.trim()) t += 'By: ' + who.value.trim() + '\n';
+  t += '------------------\n';
+  for (var i = 0; i < p.length; i++){ t += fmt(p[i].q) + ' x ' + p[i].n + '\n'; units += p[i].q; }
+  t += '------------------\n' + p.length + ' items · ' + fmt(units) + ' total';
+  var nt = note.value.trim();
+  if (nt) t += '\n\n*** 備註 / NOTES ***\n' + nt;
+  return t;
+}
+
+function send(){ location.href = 'https://wa.me/?text=' + encodeURIComponent(build()); }
+
+function copyTxt(){
+  var t = build();
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(function(){ alert('已複製,貼落 WhatsApp 或者 email 就得'); },
+      function(){ prompt('複製呢段文字:', t); });
+  } else { prompt('複製呢段文字:', t); }
+}
+
+function clearAll(){
+  if (!confirm('清空全部數量同備註?')) return;
+  for (var i = 0; i < qty.length; i++) qty[i].value = '';
+  note.value = '';
+  when.value = todayStr();
+  upd();
+}
+
+load();
+upd();
+</script>
+</body></html>
